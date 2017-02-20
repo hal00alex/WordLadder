@@ -21,6 +21,10 @@ public class Main {
 	
 	// static variables and constants only here.
 	static String[] alpha = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "N", "M", "O", "P", "Q", "R", "S", "T","U", "V", "W", "X", "Y", "Z"}; 
+	static Stack<String> stack = new Stack<String>(); 
+	static Set<String> DFSvisited = new HashSet<String>(); 
+	static Set<String> tmpvisited = new HashSet<String>(); 
+	static HashMap<String, String> DFSstore = new HashMap<String, String>(); 
 	public static void main(String[] args) throws Exception {
 		
 		//input scanner 
@@ -49,7 +53,8 @@ public class Main {
 		// initialize your static variables or constants here.
 		// We will call this method before running our JUNIT tests.  So call it 
 		// only once at the start of main.
-	
+		//?stack stuff? 
+		//?DFSVisited?  
 	}
 	
 	/**
@@ -76,6 +81,7 @@ public class Main {
 			
 			//call each function 
 			System.out.println("DFS"); 
+			stack.push(start.toUpperCase()); 
 			getWordLadderDFS(start.toUpperCase(), end.toUpperCase()); 
 			System.out.println("BFS");
 			getWordLadderBFS(start.toUpperCase(), end.toUpperCase());
@@ -91,6 +97,74 @@ public class Main {
 		// TODO some code
 		Set<String> dict = makeDictionary();
 		// TODO more code
+		//stack.push(start); 
+		//DFSvisited.add(start); 
+		
+		
+		/*if(DFSvisited.contains(start)){
+			//System.out.println("Help!"); 
+			return null; 
+		}*/ 
+		
+		if(stack.isEmpty()){
+			System.out.println("Done");
+			//print 
+			String tempPrint = end;  
+			ArrayList<String> toPrint = new ArrayList<String>(); 
+			toPrint.add(end); 
+			while (!tempPrint.equals(start)){
+				tempPrint = DFSstore.get(tempPrint); 
+				toPrint.add(tempPrint); 
+			}
+			//update later!
+			System.out.println(toPrint);
+			return null; 
+		}
+		
+		if(start.equals(end)){
+			stack.clear();
+		}
+		//StringNode root = new StringNode(null, start, null); 
+		//Tree tree  = new Tree(root); 
+		if(!stack.isEmpty()){
+			String rung = start; 
+			//System.out.println("Stack: " + stack.toString());
+			//String rung = stack.pop(); 
+			System.out.println("Checking " + rung);
+			tmpvisited.add(rung); 
+			//DFSvisited.add(rung); 
+			//System.out.println("Going");
+			//For each letter in the word
+			for (int i = 0 ; i < start.length(); i++){
+				//check to see if one letter exists
+				String checkW = ""; 
+				String beg = rung.substring(0,i); 
+				String last = rung.substring(i+1, start.length()); 
+				for (int a = 0; a < alpha.length; a ++){
+					checkW = beg + alpha[a] + last; 
+					//System.out.println(checkW); 
+					//if exist, add to queue 
+					if (dict.contains(checkW) == true && !checkW.equals(rung) && !DFSvisited.contains(checkW) && !tmpvisited.contains(checkW)){
+						//System.out.println("Hello");
+						//queue.add(checkW); 
+						stack.push(checkW); 
+						//System.out.println("Stack: " + stack.toString());
+						//DFSvisited.add(checkW); 
+						tmpvisited.add(checkW); 
+						DFSstore.put(checkW, rung); 
+						//recursion!!!!
+						getWordLadderDFS(checkW, end); 
+						//stack.pop(); 
+					}
+				}
+			}
+			DFSvisited.add(rung); 
+			//clear tmp 
+			stack.pop(); 
+			tmpvisited.clear();
+			System.out.println("finished with " + rung);
+			//System.out.println(DFSvisited.toString());
+		}
 		
 		return null; // replace this line later with real return
 	}
