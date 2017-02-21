@@ -20,11 +20,20 @@ import java.io.*;
 public class Main {
 	
 	// static variables and constants only here.
-	static String[] alpha = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "N", "M", "O", "P", "Q", "R", "S", "T","U", "V", "W", "X", "Y", "Z"}; 
+	static String[] alpha = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "N", "M", "O", 
+			"P", "Q", "R", "S", "T","U", "V", "W", "X", "Y", "Z"}; 
+	
 	static Stack<String> stack = new Stack<String>(); 
 	static Set<String> DFSvisited = new HashSet<String>(); 
 	static Set<String> tmpvisited = new HashSet<String>(); 
+	
+	static boolean DFSflag; 
+	static String end_DFS; 
+	static String start_DFS; 
+	
 	static HashMap<String, String> DFSstore = new HashMap<String, String>(); 
+	static Set<String> dictDFS; 
+	
 	public static void main(String[] args) throws Exception {
 		
 		//input scanner 
@@ -55,6 +64,7 @@ public class Main {
 		// only once at the start of main.
 		//?stack stuff? 
 		//?DFSVisited?  
+		
 	}
 	
 	/**
@@ -63,173 +73,183 @@ public class Main {
 	 * If command is /quit, return empty ArrayList. 
 	 */
 	public static ArrayList<String> parse(Scanner keyboard) {
+		boolean keepGoing = true;
 		// TO DO
-		System.out.println("Type: "); 
-		String oneLine = keyboard.nextLine(); 
-		//if quit 
-		if (oneLine.equals("quit") == true){
-			//some flag
-		}
-		//uppercase 
-		//String to Array 
-		else{
+		//System.out.println("Type: "); 
+		while(keepGoing) {
+			String oneLine = keyboard.nextLine(); 
+			//if quit 
+			if (oneLine.equals("quit")){
+				keepGoing = false;
+			}
+			else {
 		
-			String[] words = oneLine.split(" "); 
-			String start = words[0]; 
-			String end = words [1]; 
-			//System.out.println(start + end);
+				String[] words = oneLine.split(" "); 
+				String start = words[0]; 
+				String end = words [1]; 
+
+				DFSflag = false; 
+				start_DFS = start.toUpperCase(); 
+				end_DFS = end.toUpperCase();
 			
-			//call each function 
-			System.out.println("DFS"); 
-			stack.push(start.toUpperCase()); 
-			getWordLadderDFS(start.toUpperCase(), end.toUpperCase()); 
-			System.out.println("BFS");
-			getWordLadderBFS(start.toUpperCase(), end.toUpperCase());
-			///(start, end); 
+				Set<String> dictDFS = makeDictionary();
+			
+				ArrayList<String> DFS_result = new ArrayList<String>();
+				DFS_result = getWordLadderDFS(start.toUpperCase(), end.toUpperCase(), dictDFS);
+						
+				System.out.println("BFS");
+			
+				ArrayList<String> BFS_result = new ArrayList<String>();
+				BFS_result = getWordLadderBFS(start.toUpperCase(), end.toUpperCase());
+			}
 		}
 		return null;
 	}
 	
-	public static ArrayList<String> getWordLadderDFS(String start, String end) {
+	/**
+	 * Prints the ladder from a DFS search using the DFS Store
+	 * HashMap created during implementation
+	 * @return
+	 */
+	public static ArrayList<String> PrintDFS(){
+		String tempPrint = end_DFS;  
+		ArrayList<String> toPrint = new ArrayList<String>();
 		
-		// Returned list should be ordered start to end.  Include start and end.
-		// Return empty list if no ladder.
-		// TODO some code
-		Set<String> dict = makeDictionary();
-		// TODO more code
-		//stack.push(start); 
-		//DFSvisited.add(start); 
+		toPrint.add(end_DFS); 
 		
-		
-		/*if(DFSvisited.contains(start)){
-			//System.out.println("Help!"); 
-			return null; 
-		}*/ 
-		
-		if(stack.isEmpty()){
-			System.out.println("Done");
-			//print 
-			String tempPrint = end;  
-			ArrayList<String> toPrint = new ArrayList<String>(); 
-			toPrint.add(end); 
-			while (!tempPrint.equals(start)){
-				tempPrint = DFSstore.get(tempPrint); 
-				toPrint.add(tempPrint); 
-			}
-			//update later!
-			System.out.println(toPrint);
-			return null; 
+		while (!tempPrint.equals(start_DFS)){
+			tempPrint = DFSstore.get(tempPrint); 
+			toPrint.add(tempPrint); 
 		}
 		
-		if(start.equals(end)){
-			stack.clear();
-		}
-		//StringNode root = new StringNode(null, start, null); 
-		//Tree tree  = new Tree(root); 
-		if(!stack.isEmpty()){
-			String rung = start; 
-			//System.out.println("Stack: " + stack.toString());
-			//String rung = stack.pop(); 
-			System.out.println("Checking " + rung);
-			tmpvisited.add(rung); 
-			//DFSvisited.add(rung); 
-			//System.out.println("Going");
-			//For each letter in the word
-			for (int i = 0 ; i < start.length(); i++){
-				//check to see if one letter exists
-				String checkW = ""; 
-				String beg = rung.substring(0,i); 
-				String last = rung.substring(i+1, start.length()); 
-				for (int a = 0; a < alpha.length; a ++){
-					checkW = beg + alpha[a] + last; 
-					//System.out.println(checkW); 
-					//if exist, add to queue 
-					if (dict.contains(checkW) == true && !checkW.equals(rung) && !DFSvisited.contains(checkW) && !tmpvisited.contains(checkW)){
-						//System.out.println("Hello");
-						//queue.add(checkW); 
-						stack.push(checkW); 
-						//System.out.println("Stack: " + stack.toString());
-						//DFSvisited.add(checkW); 
-						tmpvisited.add(checkW); 
-						DFSstore.put(checkW, rung); 
-						//recursion!!!!
-						getWordLadderDFS(checkW, end); 
-						//stack.pop(); 
-					}
-				}
-			}
-			DFSvisited.add(rung); 
-			//clear tmp 
-			stack.pop(); 
-			tmpvisited.clear();
-			System.out.println("finished with " + rung);
-			//System.out.println(DFSvisited.toString());
-		}
-		
-		return null; // replace this line later with real return
+		System.out.println(toPrint);
+		printLadder(toPrint); 
+		return null; 
 	}
 	
+	/**
+	 * Implements a recursive depth first search that will take the parameter
+	 * "start" and see if the word end can be found in a depth first traversal
+	 * @param start the word to start from
+	 * @param end the word to be found
+	 * @param dict the dictionary being passed in 
+	 * @return an ArrayList with the word ladder if there is a path or
+	 * 		   null if there is not a path between start and end 
+	 */
+	public static ArrayList<String> getWordLadderDFS(String start, String end, Set<String> dict) {
+				
+		if(start.equals(end)){
+			DFSflag = true; 
+			System.out.println(end);
+			DFSvisited.add(end); 
+			PrintDFS(); 
+			//return null; 
+			//call print? 
+		}
+		
+		if (DFSflag) return null; 
+		
+		//start = rung = c
+		String rung = start; 
+
+		//?????shortcut??????? actually limits the paths taken. 
+		DFSvisited.add(rung); 
+				
+		//generate a neighbor n 
+		for (int i = 0 ; i < start.length(); i++){
+		//check to see if one letter exists
+		String checkW = ""; 
+		String beg = rung.substring(0,i); 
+		String last = rung.substring(i+1, start.length());
+		
+		for (int a = 0; a < alpha.length; a ++){
+			checkW = beg + alpha[a] + last;
+			//see if n exists and unvisited
+			if (dict.contains(checkW) == true && !checkW.equals(rung) && !DFSvisited.contains(checkW)){
+					
+				if(!(DFSstore.containsKey(checkW))) DFSstore.put(checkW, rung); 
+					
+				getWordLadderDFS(checkW, end, dict);
+						
+			}
+		}
+	}
+		
+	DFSvisited.add(rung); 
+	//System.out.println("finished with " + rung);		
+	return null; // replace this line later with real return
+ }
+	
+	/**
+	 * Implements a breadth first search that will take the parameter
+	 * "start" and see if the word end can be found in a breadth first traversal
+	 * @param start the word to start from
+	 * @param end the word to go to
+	 * @return
+	 */
     public static ArrayList<String> getWordLadderBFS(String start, String end) {
 		
-		// TODO some code
 		Set<String> dict = makeDictionary();
+		
 		Queue<String> queue = new LinkedList<String>(); 
 		Set<String> visited = new HashSet(); 
 		HashMap<String, String> store = new HashMap<String, String>(); 
 		Stack<String> path = new Stack<String>(); 
+		
 		queue.add(start); 
 		path.add(start); 
-		//StringNode root = new StringNode(null, start, null); 
-		//Tree tree  = new Tree(root); 
+		
 		while(!queue.isEmpty()){
 			String rung = queue.remove(); 
-			//System.out.println("Checking " + rung);
+			
 			visited.add(rung); 
-			//System.out.println("Going");
-			//For each letter in the word
+			
 			for (int i = 0 ; i < start.length(); i++){
-				//check to see if one letter exists
+				
 				String checkW = ""; 
 				String beg = rung.substring(0,i); 
 				String last = rung.substring(i+1, start.length()); 
+				
 				for (int a = 0; a < alpha.length; a ++){
 					checkW = beg + alpha[a] + last; 
-					//System.out.println(checkW); 
-					//if exist, add to queue 
+					
 					if (checkW.equals(end)){
-						//System.out.println("Found"); 
-						//return (null); 
 					}
-					if (dict.contains(checkW) == true && !checkW.equals(rung) && !queue.contains(checkW) && !visited.contains(checkW)){
+					
+					if (dict.contains(checkW) && !checkW.equals(rung) && !queue.contains(checkW) && !visited.contains(checkW)){
 						queue.add(checkW); 
 						store.put(checkW, rung); 
-						//StringNode leaf = new StringNode(rung, checkW); 
+						
 						visited.add(checkW); 
-						//System.out.println(queue.toString());
+
 					}
 				}
 			}
 		}
-		//print 
+		
 		String tempPrint = end;  
 		ArrayList<String> toPrint = new ArrayList<String>(); 
-		toPrint.add(end); 
+		toPrint.add(end);
+		
+		/**
+		 * Creates and prints an array list of the path
+		 * 
+		 */
 		while (!tempPrint.equals(start)){
 			tempPrint = store.get(tempPrint); 
 			toPrint.add(tempPrint); 
 		}
-		System.out.println(toPrint);
-		// TODO more code
-		//queue 
-		//while queue not empty 
-			//remove 
-			//for each letter 
-				//put one letter off in queue 
-		//dequeue 
+
+		printLadder(toPrint); 
+		
 		System.out.println("Lost or DNE?");
 		return null; // replace this line later with real return
 	}
     
+    /**
+     * Creates the dictionary
+     * @return a HashSet that has the dictionary 
+     */
 	public static Set<String>  makeDictionary () {
 		Set<String> words = new HashSet<String>();
 		Scanner infile = null;
@@ -246,9 +266,13 @@ public class Main {
 		return words;
 	}
 	
+	
+	
 	public static void printLadder(ArrayList<String> ladder) {
+		System.out.println("a " + ladder.size() + "-rung word ladder exists between " + start_DFS.toLowerCase() + " and " + end_DFS.toLowerCase());
 		
+		for (int i = ladder.size() - 1; i > -1; i--){
+			System.out.println(ladder.get(i));
+		}
 	}
-	// TODO
-	// Other private static methods here
 }
