@@ -1,14 +1,14 @@
 /* WORD LADDER Main.java
  * EE422C Project 3 submission by
  * Replace <...> with your actual data.
- * <Student1 Name>
- * <Student1 EID>
- * <Student1 5-digit Unique No.>
- * <Student2 Name>
- * <Student2 EID>
- * <Student2 5-digit Unique No.>
+ * Kausthub Poondi
+ * kp26753
+ * 16215
+ * Haley Alexander
+ * ha5722
+ * 16215
  * Slip days used: <0>
- * Git URL:
+ * Git URL:https://github.com/hal00alex/WordLadder 
  * Spring 2017
  */
 
