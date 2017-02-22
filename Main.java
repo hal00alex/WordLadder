@@ -98,7 +98,7 @@ public class Main3 {
 			//check and return if words are equal
 			//special print for same word 
 			if (start.equals(end)){
-				System.out.println("a ladder 1-rung " + start_DFS.toLowerCase() + " and " + end_DFS.toLowerCase() + ".");
+				System.out.println("a ladder 0-rung " + start_DFS.toLowerCase() + " and " + end_DFS.toLowerCase() + ".");
 				ArrayList<String> returnArr = new ArrayList<String>(); 
 				returnArr.add(start); 
 				returnArr.add(end); 
@@ -295,7 +295,7 @@ public class Main3 {
 			return; 
 		}
 		
-		System.out.println("a " + ladder.size() + "-rung word ladder exists between " + start_DFS.toLowerCase() + " and " + end_DFS.toLowerCase() + ".");
+		System.out.println("a " + (ladder.size() - 2) + "-rung word ladder exists between " + start_DFS.toLowerCase() + " and " + end_DFS.toLowerCase() + ".");
 		
 		for (int i = ladder.size() - 1; i > -1; i--){
 			System.out.println(ladder.get(i).toLowerCase());
